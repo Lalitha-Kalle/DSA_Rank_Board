@@ -9,4 +9,4 @@ const calculateScore = (submissionStats) => {
   return score
 }
 
-module.exports = calculateScore
+module.exports = { calculateScore }
