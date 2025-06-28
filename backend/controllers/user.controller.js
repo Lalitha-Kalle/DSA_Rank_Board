@@ -22,17 +22,21 @@
 
 // module.exports = { registerUser }
 
-const User = require('../models/User');
-const { fetchLeetCodeData } = require('../services/leetcodeService');
-const { calculateScore } = require('../utils/scorer');
+const User = require('../models/user.model');
+const { fetchLeetcodeData } = require('../services/leetcodeService');
+const { calculateScore } = require('../utils/score');
 
 const registerUser = async (req, res) => {
   const { email, leetcodeUsername } = req.body;
+  if (!email || !leetcodeUsername) {
+    return res.status(400).json({ message: "Email and Leetcode username are required" });
+  }
+
   try {
     const exists = await User.findOne({ leetcodeUsername });
     if (exists) return res.status(409).json({ message: "User already exists" });
 
-    const stats = await fetchLeetCodeData(leetcodeUsername);
+    const stats = await fetchLeetcodeData(leetcodeUsername);
     const score = calculateScore(stats);
 
     const newUser = await User.create({ email, leetcodeUsername, score });
@@ -42,9 +46,5 @@ const registerUser = async (req, res) => {
   }
 };
 
-const getLeaderboard = async (req, res) => {
-  const users = await User.find().sort({ score: -1 }).limit(50);
-  res.json(users);
-};
 
-module.exports = { registerUser, getLeaderboard };
+module.exports = { registerUser };
