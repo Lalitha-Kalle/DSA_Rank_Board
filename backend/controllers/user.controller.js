@@ -46,5 +46,11 @@ const registerUser = async (req, res) => {
   }
 };
 
+const getLeaderboard = async (req, res) => {
+  const users = await User.find().sort({ score: -1 }).limit(50);
+  res.json(users);
+};
 
-module.exports = { registerUser };
+
+
+module.exports = { registerUser, getLeaderboard };
